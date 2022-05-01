@@ -5,8 +5,13 @@
       <map>
         <entry key="..\:/Users/rober/AndroidStudioProjects/BasicHttp/app/src/main/res/drawable/btn_bg.xml" value="0.1935" />
         <entry key="..\:/Users/rober/AndroidStudioProjects/BasicHttp/app/src/main/res/drawable/btn_border.xml" value="0.1935" />
+        <entry key="..\:/Users/rober/AndroidStudioProjects/BasicHttp/app/src/main/res/drawable/circular_bg.xml" value="0.1935" />
+        <entry key="..\:/Users/rober/AndroidStudioProjects/BasicHttp/app/src/main/res/drawable/dark_bg.xml" value="0.1935" />
+        <entry key="..\:/Users/rober/AndroidStudioProjects/BasicHttp/app/src/main/res/drawable/ic_close.xml" value="0.1935" />
         <entry key="..\:/Users/rober/AndroidStudioProjects/BasicHttp/app/src/main/res/layout/activity_main.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/rober/AndroidStudioProjects/BasicHttp/app/src/main/res/layout/activity_new_tweet.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/rober/AndroidStudioProjects/BasicHttp/app/src/main/res/layout/custom_dialog.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/rober/AndroidStudioProjects/BasicHttp/app/src/main/res/layout/image_adaptable.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/rober/AndroidStudioProjects/BasicHttp/app/src/main/res/layout/image_item.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/rober/AndroidStudioProjects/BasicHttp/app/src/main/res/layout/modal_bottom_sheet_content.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/rober/AndroidStudioProjects/BasicHttp/app/src/main/res/layout/post_item.xml" value="0.25416666666666665" />

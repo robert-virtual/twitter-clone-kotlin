@@ -1,5 +1,6 @@
-package com.example.basichttp
+package com.example.basichttp.ui
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -9,8 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.basichttp.adapters.PostsAdapter
 import com.example.basichttp.databinding.ActivityMainBinding
 import com.example.basichttp.model.Post
-import com.example.basichttp.ui.MainViewModel
-import com.example.basichttp.ui.MyBottomSheet
+import com.example.basichttp.viewmodel.MainViewModel
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding:ActivityMainBinding
@@ -44,17 +44,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
     fun addPost(){
-        val modalBottomSheet = MyBottomSheet()
-        modalBottomSheet.show(supportFragmentManager,MyBottomSheet.TAG)
-        /*
-        val fragmentManager = supportFragmentManager
-        val newFragment = CustomDialog()
-        val transaction = fragmentManager.beginTransaction()
-        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-        transaction.add(android.R.id.content,newFragment)
-            .addToBackStack(null)
-            .commit()
-         */
+        val i = Intent(this,NewTweet::class.java)
+        startActivity(i)
     }
     fun hideError(){
         binding.error.visibility = View.GONE

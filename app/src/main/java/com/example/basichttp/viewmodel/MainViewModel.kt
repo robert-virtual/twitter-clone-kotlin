@@ -1,4 +1,4 @@
-package com.example.basichttp.ui
+package com.example.basichttp.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
