@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.security.ConfirmationPrompt
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -43,11 +44,13 @@ class NewTweet : AppCompatActivity() {
         requestpermission()
         btnsListeners()
         viewModel.post.observe(this){
+            binding.loader.visibility = View.VISIBLE
             binding.tweet.text.clear()
             viewModel.selectedImages.clear()
             finish()
         }
         viewModel.error.observe(this){
+            binding.loader.visibility = View.VISIBLE
             Snackbar.make(binding.btnPublish,it,Snackbar.LENGTH_SHORT)
                 .show()
         }
@@ -57,6 +60,7 @@ class NewTweet : AppCompatActivity() {
             finish()
         }
         binding.btnPublish.setOnClickListener {
+            binding.loader.visibility = View.VISIBLE
             viewModel.createPost(Post(binding.tweet.text.toString() ))
         }
 

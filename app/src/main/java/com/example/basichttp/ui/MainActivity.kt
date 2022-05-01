@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.basichttp.adapters.PostsAdapter
 import com.example.basichttp.databinding.ActivityMainBinding
@@ -33,11 +34,18 @@ class MainActivity : AppCompatActivity() {
             binding.btnTryAgain.visibility = View.VISIBLE
             binding.error.text = it
         }
+        listeners()
+    }
+    fun listeners(){
         binding.btnTryAgain.setOnClickListener {
             getData()
         }
         binding.btnAdd.setOnClickListener {
             addPost()
+        }
+        binding.swipeRefresh.setOnRefreshListener {
+            getData(false)
+            binding.swipeRefresh.isRefreshing = false
         }
     }
     fun addPost(){
@@ -49,15 +57,22 @@ class MainActivity : AppCompatActivity() {
         binding.btnTryAgain.visibility = View.GONE
         binding.loader.visibility = View.GONE
     }
-    fun getData(){
+    fun getData(loader:Boolean = true){
         viewModel.getPosts()
         binding.error.visibility = View.GONE
         binding.btnTryAgain.visibility = View.GONE
-        binding.loader.visibility = View.VISIBLE
+        binding.loader.visibility = if(loader){
+            View.VISIBLE
+        }else{
+            View.GONE
+        }
     }
     fun initRecyclerView( data:List<Post>){
+        val manager = LinearLayoutManager(this)
+        val decorator = DividerItemDecoration(this,manager.orientation)
         postsAdapter = PostsAdapter(data)
         binding.postsList.adapter = postsAdapter
-        binding.postsList.layoutManager = LinearLayoutManager(this)
+        binding.postsList.layoutManager = manager
+        binding.postsList.addItemDecoration(decorator)
     }
 }

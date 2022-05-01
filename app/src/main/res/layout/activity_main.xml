@@ -9,11 +9,16 @@
     android:id="@+id/loader"
     android:layout_centerInParent="true"
     android:layout_height="wrap_content"/>
-    <androidx.recyclerview.widget.RecyclerView
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
-        android:id="@+id/postsList"
-        tools:listitem="@layout/post_item"
-        android:layout_height="wrap_content"/>
+        android:id="@+id/swipeRefresh"
+        android:layout_height="wrap_content">
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:id="@+id/postsList"
+            tools:listitem="@layout/post_item"
+            android:layout_height="wrap_content"/>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     <TextView
         android:layout_width="match_parent"
         tools:text="Error"

@@ -5,7 +5,13 @@
     android:id="@+id/mainAct"
     android:layout_height="match_parent"
     tools:context=".ui.NewTweet">
-
+<ProgressBar
+    android:layout_width="wrap_content"
+    android:id="@+id/loader"
+    android:visibility="gone"
+    tools:visibility="visible"
+    android:layout_centerInParent="true"
+    android:layout_height="wrap_content"/>
     <ImageButton
         android:layout_width="wrap_content"
         android:background="@drawable/circular_bg"
