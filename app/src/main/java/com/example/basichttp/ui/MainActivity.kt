@@ -15,20 +15,17 @@ import com.example.basichttp.viewmodel.MainViewModel
 class MainActivity : AppCompatActivity() {
     private lateinit var binding:ActivityMainBinding
     private val viewModel: MainViewModel by viewModels()
-    private val posts = mutableListOf<Post>()
-    private val postsAdapter:PostsAdapter  = PostsAdapter(posts)
+    private lateinit var postsAdapter:PostsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        initRecyclerView()
         getData()
         viewModel.posts.observe(this){
             hideError()
-            posts.addAll(it)
-            Toast.makeText(this, "Posts ${posts.size}", Toast.LENGTH_SHORT).show()
-            postsAdapter.notifyDataSetChanged()
+            Toast.makeText(this, "Posts ${viewModel.posts.value?.size}", Toast.LENGTH_SHORT).show()
+            initRecyclerView(it)
         }
         viewModel.error.observe(this){
             binding.loader.visibility = View.GONE
@@ -58,7 +55,8 @@ class MainActivity : AppCompatActivity() {
         binding.btnTryAgain.visibility = View.GONE
         binding.loader.visibility = View.VISIBLE
     }
-    fun initRecyclerView(){
+    fun initRecyclerView( data:List<Post>){
+        postsAdapter = PostsAdapter(data)
         binding.postsList.adapter = postsAdapter
         binding.postsList.layoutManager = LinearLayoutManager(this)
     }

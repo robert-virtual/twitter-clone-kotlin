@@ -2,8 +2,8 @@ package com.example.basichttp.model
 
 data class Post(
     val content: String,
-    val id: String,
-    val images: List<Any>,
-    val user: User,
-    val userId: String
+    val id: String? = null,
+    val images: List<Any>? = null,
+    val user: User? = null,
+    val userId: String? = null
 )

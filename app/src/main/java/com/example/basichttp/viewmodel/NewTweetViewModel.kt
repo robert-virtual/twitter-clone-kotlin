@@ -10,9 +10,20 @@ import kotlinx.coroutines.launch
 import java.lang.Exception
 
 
-
 class NewTweetViewModel:ViewModel() {
-    val images = MutableLiveData<MutableList<MyImage>>()
-    val selectedImages = MutableLiveData<MutableList<MyImage>>()
+   val post = MutableLiveData<Post>()
+    val error = MutableLiveData<String>()
+    val images = mutableListOf<MyImage>()
+    val selectedImages = mutableListOf<MyImage>()
 
+
+    fun createPost(_post: Post){
+       viewModelScope.launch {
+           try {
+               post.value = RetrofitInstance.twitterApi.createPost(_post)
+           }catch (e:Exception){
+              error.value = e.message
+           }
+       }
+    }
 }

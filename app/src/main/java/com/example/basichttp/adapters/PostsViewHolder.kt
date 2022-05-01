@@ -8,8 +8,8 @@ import com.example.basichttp.model.Post
 class PostsViewHolder (view:View):RecyclerView.ViewHolder(view){
     val binding = PostItemBinding.bind(view)
     fun render(post:Post){
-       binding.user.text = post.user.name
-        binding.username.text = "@${post.user.name}"
+       binding.user.text = post.user?.name
+        binding.username.text = "@${post.user?.name}"
         binding.content.text = post.content
 
     }

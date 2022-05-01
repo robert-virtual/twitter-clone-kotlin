@@ -5,27 +5,28 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
+import android.security.ConfirmationPrompt
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.basichttp.adapters.ImagesAdapter
 import com.example.basichttp.databinding.ActivityNewTweetBinding
 import com.example.basichttp.model.MyImage
+import com.example.basichttp.model.Post
+import com.example.basichttp.viewmodel.NewTweetViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 
 class NewTweet : AppCompatActivity() {
+    val viewModel:NewTweetViewModel by viewModels()
     private lateinit var binding: ActivityNewTweetBinding
-    val images = mutableListOf<MyImage>()
-    val selectedImages = mutableListOf<MyImage>()
-    private val selectedImagesAdapter = ImagesAdapter(selectedImages){
-        removeImage(it)
-    }
+    private lateinit var selectedImagesAdapter:ImagesAdapter
 
-    private val imagesAdapter = ImagesAdapter(images){
-        onSelectedImage(it)
-    }
+    private lateinit var imagesAdapter:ImagesAdapter
+
     val requestlauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()){
         if (it){
             loadImages()
@@ -38,10 +39,52 @@ class NewTweet : AppCompatActivity() {
         binding = ActivityNewTweetBinding.inflate(layoutInflater)
         setContentView(binding.root)
         supportActionBar?.hide()
-        requestpermission()
         initRecyclerView()
+        requestpermission()
+        btnsListeners()
+        viewModel.post.observe(this){
+            binding.tweet.text.clear()
+            viewModel.selectedImages.clear()
+            finish()
+        }
+        viewModel.error.observe(this){
+            Snackbar.make(binding.btnPublish,it,Snackbar.LENGTH_SHORT)
+                .show()
+        }
+    }
+    fun btnsListeners(){
+        binding.btnClose.setOnClickListener {
+            finish()
+        }
+        binding.btnPublish.setOnClickListener {
+            viewModel.createPost(Post(binding.tweet.text.toString() ))
+        }
+
+    }
+    override fun finish() {
+        if (viewModel.selectedImages.size >0 || binding.tweet.text.toString() != ""){
+            val dialog = MaterialAlertDialogBuilder(this)
+                .setTitle("Descartar Tweet")
+                .setMessage("Se perdara el contenido de este tweet")
+                .setPositiveButton("Continuar con este tweet"){dialog,which->
+
+                }
+                .setNegativeButton("Descartar Tweet"){dialog,which->
+                    super.finish()
+                }
+            dialog.show()
+        }else{
+            super.finish()
+        }
+
     }
     fun initRecyclerView(){
+        selectedImagesAdapter = ImagesAdapter(viewModel.selectedImages){
+            removeImage(it)
+        }
+        imagesAdapter = ImagesAdapter(viewModel.images){
+            onSelectedImage(it)
+        }
         //binding.recyclerView.layoutManager = GridLayoutManager(this, 4)
         binding.recyclerView.layoutManager = LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
         binding.recyclerView.adapter = imagesAdapter
@@ -65,23 +108,23 @@ class NewTweet : AppCompatActivity() {
         }
     }
     fun removeImage(image:MyImage){
-        val itemIdx = selectedImages.indexOf(image)
-        selectedImages.remove(image)
+        val itemIdx = viewModel.selectedImages.indexOf(image)
+        viewModel.selectedImages.remove(image)
         selectedImagesAdapter.notifyItemRemoved(itemIdx)
     }
 
     fun onSelectedImage(image:MyImage){
-        if (selectedImages.size == 5){
+        if (viewModel.selectedImages.size == 5){
             Snackbar.make(binding.recyclerView,"Solo puedes agregar 5 imagenes",Snackbar.LENGTH_SHORT)
                 .show()
 
             return
         }
-        selectedImages.add(MyImage(image.uri,true))
-        selectedImagesAdapter.notifyItemInserted(selectedImages.size-1)
+        viewModel.selectedImages.add(MyImage(image.uri,true))
+        selectedImagesAdapter.notifyItemInserted(viewModel.selectedImages.size-1)
     }
     fun loadImages(){
-
+        if (viewModel.images.size > 0) return
         val resolver = contentResolver
         val uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         val cursor  = resolver.query(uri,null,null,null,"${MediaStore.Images.Media.DATE_TAKEN} DESC")
@@ -97,8 +140,8 @@ class NewTweet : AppCompatActivity() {
                 do {
                     val id = cursor.getLong(idColumn)
                     val uri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,id)
-                    images.add(MyImage(uri,false))
-                    imagesAdapter.notifyItemInserted(images.size-1)
+                    viewModel.images.add(MyImage(uri,false))
+                    imagesAdapter.notifyItemInserted(viewModel.images.size-1)
 
                 }while(cursor.moveToNext())
 

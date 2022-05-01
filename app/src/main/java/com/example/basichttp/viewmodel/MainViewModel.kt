@@ -11,13 +11,15 @@ import java.lang.Exception
 
 
 class MainViewModel:ViewModel() {
+
     val posts = MutableLiveData<List<Post>>()
     val error = MutableLiveData<String>()
 
     fun getPosts(){
         viewModelScope.launch {
             try {
-                posts.value = RetrofitInstance.twitterApi.getPosts()
+                val res = RetrofitInstance.twitterApi.getPosts()
+                posts.value = res
             }catch (e:Exception){
               error.value = e.message
             }
