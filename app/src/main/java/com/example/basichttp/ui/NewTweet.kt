@@ -44,13 +44,13 @@ class NewTweet : AppCompatActivity() {
         requestpermission()
         btnsListeners()
         viewModel.post.observe(this){
-            binding.loader.visibility = View.VISIBLE
+            binding.loader.visibility = View.GONE
             binding.tweet.text.clear()
             viewModel.selectedImages.clear()
             finish()
         }
         viewModel.error.observe(this){
-            binding.loader.visibility = View.VISIBLE
+            binding.loader.visibility = View.GONE
             Snackbar.make(binding.btnPublish,it,Snackbar.LENGTH_SHORT)
                 .show()
         }
@@ -61,7 +61,8 @@ class NewTweet : AppCompatActivity() {
         }
         binding.btnPublish.setOnClickListener {
             binding.loader.visibility = View.VISIBLE
-            viewModel.createPost(Post(binding.tweet.text.toString() ))
+            //viewModel.createPost(Post(binding.tweet.text.toString() ))
+            viewModel.insertPost(Post(binding.tweet.text.toString() ))
         }
 
     }
@@ -124,7 +125,7 @@ class NewTweet : AppCompatActivity() {
 
             return
         }
-        viewModel.selectedImages.add(MyImage(image.uri,true))
+        viewModel.selectedImages.add(MyImage(image.uri,true,null,true))
         selectedImagesAdapter.notifyItemInserted(viewModel.selectedImages.size-1)
     }
     fun loadImages(){

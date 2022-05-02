@@ -42,5 +42,14 @@
         android:layout_below="@id/user"
         tools:text="Content"
         android:layout_height="wrap_content"/>
-
+<androidx.recyclerview.widget.RecyclerView
+    android:layout_width="match_parent"
+    android:layout_below="@+id/imgcard"
+    android:layout_marginTop="10dp"
+    android:id="@+id/images"
+    tools:listitem="@layout/image_adaptable"
+    app:spanCount="2"
+    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+    tools:itemCount="5"
+    android:layout_height="wrap_content"/>
 </RelativeLayout>

@@ -7,6 +7,10 @@ import com.example.basichttp.api.RetrofitInstance
 import com.example.basichttp.model.MyImage
 import com.example.basichttp.model.Post
 import kotlinx.coroutines.launch
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import java.io.File
 import java.lang.Exception
 
 
@@ -25,5 +29,22 @@ class NewTweetViewModel:ViewModel() {
               error.value = e.message
            }
        }
+    }
+
+    fun insertPost(_post: Post){
+        viewModelScope.launch {
+            try {
+                val requestBody = RequestBody.create(MultipartBody.FORM,_post.content)
+
+                val file = File(selectedImages[0].uri?.path!!)
+                val content = MultipartBody.Part.createFormData("content",_post.content)
+                val imagesBody = RequestBody.create(MultipartBody.FORM,file)
+                val imagePart = MultipartBody.Part.createFormData("image",file.name,imagesBody)
+
+                post.value = RetrofitInstance.twitterApi.insertPost(requestBody,imagePart)
+            }catch (e:Exception){
+                error.value = e.message
+            }
+        }
     }
 }
