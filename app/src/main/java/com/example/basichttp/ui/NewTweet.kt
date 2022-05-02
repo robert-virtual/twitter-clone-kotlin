@@ -51,7 +51,7 @@ class NewTweet : AppCompatActivity() {
             binding.selectedImages.visibility = View.VISIBLE
             binding.tweet.isEnabled = true
             binding.loader.visibility = View.GONE
-            Snackbar.make(binding.btnPublish,it,Snackbar.LENGTH_SHORT)
+            Snackbar.make(binding.btnPublish,"ups ha ocurrido un error vuelve a intentar",Snackbar.LENGTH_SHORT)
                 .show()
         }
     }
