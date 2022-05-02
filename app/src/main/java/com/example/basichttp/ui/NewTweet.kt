@@ -61,8 +61,7 @@ class NewTweet : AppCompatActivity() {
         }
         binding.btnPublish.setOnClickListener {
             binding.loader.visibility = View.VISIBLE
-            //viewModel.createPost(Post(binding.tweet.text.toString() ))
-            viewModel.insertPost(Post(binding.tweet.text.toString() ))
+            viewModel.createPost(binding.tweet.text.toString())
         }
 
     }
@@ -83,7 +82,7 @@ class NewTweet : AppCompatActivity() {
         }
 
     }
-    fun initRecyclerView(){
+    private fun initRecyclerView(){
         selectedImagesAdapter = ImagesAdapter(viewModel.selectedImages){
             removeImage(it)
         }
@@ -97,7 +96,7 @@ class NewTweet : AppCompatActivity() {
         binding.selectedImages.layoutManager = GridLayoutManager(this,2)
         binding.selectedImages.adapter = selectedImagesAdapter
     }
-    fun requestpermission(){
+    private fun requestpermission(){
         when{
             ContextCompat.checkSelfPermission(
                 applicationContext,
@@ -112,23 +111,36 @@ class NewTweet : AppCompatActivity() {
             }
         }
     }
-    fun removeImage(image:MyImage){
+    private fun removeImage(image:MyImage){
         val itemIdx = viewModel.selectedImages.indexOf(image)
         viewModel.selectedImages.remove(image)
         selectedImagesAdapter.notifyItemRemoved(itemIdx)
     }
 
-    fun onSelectedImage(image:MyImage){
+    private fun onSelectedImage(image:MyImage){
         if (viewModel.selectedImages.size == 5){
             Snackbar.make(binding.recyclerView,"Solo puedes agregar 5 imagenes",Snackbar.LENGTH_SHORT)
                 .show()
 
             return
         }
-        viewModel.selectedImages.add(MyImage(image.uri,true,null,true))
-        selectedImagesAdapter.notifyItemInserted(viewModel.selectedImages.size-1)
+
+        val query = contentResolver.query(image.uri!!,null,null,null,null)
+        query.use { cursor->
+            val nameColumn = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
+            val mimeTypeColumn = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
+            cursor?.moveToFirst()
+            if (nameColumn !== null && mimeTypeColumn != null){
+                val name = cursor.getString(nameColumn)
+                val mimeType = cursor.getString(mimeTypeColumn)
+                Toast.makeText(this, "$name", Toast.LENGTH_SHORT).show()
+                val byteArray = contentResolver.openInputStream(image.uri)?.readBytes()
+                viewModel.selectedImages.add(MyImage(image.uri,true,null,true,byteArray,name,mimeType))
+                selectedImagesAdapter.notifyItemInserted(viewModel.selectedImages.size-1)
+            }
+        }
     }
-    fun loadImages(){
+    private fun loadImages(){
         if (viewModel.images.size > 0) return
         val resolver = contentResolver
         val uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI

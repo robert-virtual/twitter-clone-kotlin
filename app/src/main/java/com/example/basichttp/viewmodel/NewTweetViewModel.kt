@@ -4,8 +4,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.basichttp.api.RetrofitInstance
+import com.example.basichttp.api.TwitterKtor
 import com.example.basichttp.model.MyImage
 import com.example.basichttp.model.Post
+import io.ktor.client.call.*
+import io.ktor.client.request.*
+import io.ktor.client.request.forms.*
+import io.ktor.http.*
 import kotlinx.coroutines.launch
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -21,30 +26,26 @@ class NewTweetViewModel:ViewModel() {
     val selectedImages = mutableListOf<MyImage>()
 
 
-    fun createPost(_post: Post){
+    fun createPost(content: String){
        viewModelScope.launch {
            try {
-               post.value = RetrofitInstance.twitterApi.createPost(_post)
+               post.value = TwitterKtor.client.submitFormWithBinaryData(
+                   url ="https://twitter-z.herokuapp.com/posts",
+               formData = formData {
+                   append("content",content)
+                   for (image in selectedImages){
+                       append("images",image.byteArray!!,Headers.build {
+                           append(HttpHeaders.ContentType,image.mimeType!!)
+                           append(HttpHeaders.ContentDisposition,"filename=${image.name}")
+                       })
+                   }
+               }
+               ).body()
+
            }catch (e:Exception){
               error.value = e.message
            }
        }
     }
 
-    fun insertPost(_post: Post){
-        viewModelScope.launch {
-            try {
-                val requestBody = RequestBody.create(MultipartBody.FORM,_post.content)
-
-                val file = File(selectedImages[0].uri?.path!!)
-                val content = MultipartBody.Part.createFormData("content",_post.content)
-                val imagesBody = RequestBody.create(MultipartBody.FORM,file)
-                val imagePart = MultipartBody.Part.createFormData("image",file.name,imagesBody)
-
-                post.value = RetrofitInstance.twitterApi.insertPost(requestBody,imagePart)
-            }catch (e:Exception){
-                error.value = e.message
-            }
-        }
-    }
 }
