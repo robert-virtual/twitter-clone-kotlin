@@ -5,7 +5,6 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
-import android.security.ConfirmationPrompt
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.basichttp.adapters.ImagesAdapter
 import com.example.basichttp.databinding.ActivityNewTweetBinding
 import com.example.basichttp.model.MyImage
-import com.example.basichttp.model.Post
 import com.example.basichttp.viewmodel.NewTweetViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -50,6 +48,8 @@ class NewTweet : AppCompatActivity() {
             finish()
         }
         viewModel.error.observe(this){
+            binding.selectedImages.visibility = View.VISIBLE
+            binding.tweet.isEnabled = true
             binding.loader.visibility = View.GONE
             Snackbar.make(binding.btnPublish,it,Snackbar.LENGTH_SHORT)
                 .show()
@@ -60,6 +60,8 @@ class NewTweet : AppCompatActivity() {
             finish()
         }
         binding.btnPublish.setOnClickListener {
+            binding.selectedImages.visibility = View.GONE
+            binding.tweet.isEnabled = false
             binding.loader.visibility = View.VISIBLE
             viewModel.createPost(binding.tweet.text.toString())
         }
@@ -133,7 +135,6 @@ class NewTweet : AppCompatActivity() {
             if (nameColumn !== null && mimeTypeColumn != null){
                 val name = cursor.getString(nameColumn)
                 val mimeType = cursor.getString(mimeTypeColumn)
-                Toast.makeText(this, "$name", Toast.LENGTH_SHORT).show()
                 val byteArray = contentResolver.openInputStream(image.uri)?.readBytes()
                 viewModel.selectedImages.add(MyImage(image.uri,true,null,true,byteArray,name,mimeType))
                 selectedImagesAdapter.notifyItemInserted(viewModel.selectedImages.size-1)
